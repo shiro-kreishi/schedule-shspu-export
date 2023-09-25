@@ -5,8 +5,8 @@ def get_connection(
         db='postgres', user='postgres', 
         password='postgres', host='localhost', port=5432):
     return psycopg2.connect(
-    database='sch', user='obs',
-    password='dideboki', host='shebot.shgpi', port=5432 
+    database=db, user=user,
+    password=password, host=host, port=port 
 )
 
 def get_cursor(conn):

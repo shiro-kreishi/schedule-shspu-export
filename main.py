@@ -40,11 +40,16 @@ def main():
         order by p.num asc
     ''')
 
-    results = execute_sql(query_by_date.substitute(date='2023-09-21'), cur, all=True)
+    results = execute_sql(query_by_date.substitute(date='2023-09-26'), cur, all=True)
     for res in results:
-        if res[0].split()[-1] in technopark_auditoriums:
-            print(res[0], ' | ', res[-1], ' | ', res[0].split()[-1],' | ', res[1], ' | ', time_pair[res[2]])
-
+        # print(res[0].split())
+        try:
+            if res[0].split()[-1] in technopark_auditoriums:
+                print(res[0].replace("/ ", ""), ' | ', res[len(res)-1], ' | ', res[0].split()[-1],' | ', res[1], ' | ', time_pair[res[2]])
+        except:
+            print('IndexError: list index out of range')
+        finally:
+            pass
     close_connection(conn)
 
 if __name__=='__main__':
