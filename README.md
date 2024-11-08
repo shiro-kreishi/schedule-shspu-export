@@ -8,3 +8,8 @@ PASSWORD_PG=""
 HOST_PG=""
 PORT_PG=5432
 ```
+
+Run program:
+```bash
+python main.py 2024-09-02
+```

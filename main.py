@@ -2,6 +2,8 @@ from db.connect import *
 from string import Template
 import os
 from dotenv import load_dotenv
+from sys import argv
+from db.functions import search_pars_by_date
 
 time_pair = {
     1: '08:00-09:30',
@@ -13,11 +15,14 @@ time_pair = {
 }
 
 technopark_auditoriums = [
-    '232А', '233А', '234А', '235А', '128А', '129А', '201В', 
+    '232А', '233А', '234А', '235А', '128А', '129А', '201В', '217В', 
 ]
 
 def main():
-    
+    if len(argv) <= 1:
+        print('Enter some argv')
+        return
+    date = argv[1]
     dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
@@ -31,25 +36,7 @@ def main():
         db=db, user=user, password=password,
         host=host, port=port
     )
-    cur = get_cursor(conn)
-    query_by_date = Template('''
-        select p.text, p.date, p.num, g.name from pairs p
-        inner join groupsofpairs gop on p.id = gop.pair_id
-        inner join "groups" g on g.id = gop.group_id 
-        where p.date = '$date' 
-        order by p.num asc
-    ''')
-
-    results = execute_sql(query_by_date.substitute(date='2023-09-26'), cur, all=True)
-    for res in results:
-        # print(res[0].split())
-        try:
-            if res[0].split()[-1] in technopark_auditoriums:
-                print(res[0].replace("/ ", ""), ' | ', res[len(res)-1], ' | ', res[0].split()[-1],' | ', res[1], ' | ', time_pair[res[2]])
-        except:
-            print('IndexError: list index out of range')
-        finally:
-            pass
+    search_pars_by_date(conn, date, technopark_auditoriums)
     close_connection(conn)
 
 if __name__=='__main__':
