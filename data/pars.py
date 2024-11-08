@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class Pars_minimal:
     def __init__(self, name: str, group: str, auditorium: str):
         self.name = name
@@ -6,3 +8,10 @@ class Pars_minimal:
     
     def __str__(self):
         return f'{self.name} {self.group} {self.auditorium}'
+    
+
+class Pars_with_date_and_time(Pars_minimal):
+    def __init__(self, name: str, group: str, auditorium: str, date: datetime.date, timestamp: str):
+        super().__init__(name, group, auditorium)
+        self.date = date
+        self.timestamp = timestamp
