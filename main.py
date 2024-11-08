@@ -41,15 +41,17 @@ def main():
         host=host, port=port
     )
     searcher = Searcher(connection=conn)
-    # pars = searcher.by_date(date, technopark_auditoriums, searcher.create_minimal_pair)
+    # pars = searcher.by_date(start_date, technopark_auditoriums, searcher.create_minimal_pair)
     # for p in pars:
     #     print(p)
     # pars = searcher.by_date(start_date, technopark_auditoriums, searcher.create_pair_with_date_and_time)
     # for p in pars:
     #     print(p)
     
-    pairs = searcher.by_range_of_dates(start_date, end_date, technopark_auditoriums, searcher.create_minimal_pair)
-    print(reduce(lambda count, l: count + len(l), pairs, 0))
+    pairs = searcher.by_range_of_dates(start_date, end_date, technopark_auditoriums, searcher.create_pair_with_date_and_time)
+    print(len(pairs))
+    for p in pairs:
+        print(p)
     
     close_connection(conn)
 

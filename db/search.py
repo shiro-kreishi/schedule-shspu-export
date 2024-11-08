@@ -18,17 +18,9 @@ class Searcher:
         6: '16:40-18:10',
     }
 
-    query_by_date = Template('''
-        select p.text, p.date, p.num, g.name from pairs p
-        inner join groupsofpairs gop on p.id = gop.pair_id
-        inner join "groups" g on g.id = gop.group_id 
-        where p.date = '$date' 
-        order by p.num asc
-    ''')
-
-    def by_date(self, date: datetime, auditoriums: list, func) -> list:
+    def execute_query(self, query: Template, auditoriums, func) -> list:
+        results = execute_sql(query, self.cursor, all=True)
         pairs = []
-        results = execute_sql(self.query_by_date.substitute(date=str(date)), self.cursor, all=True)
         for res in results:
             try:
                 if res[0].split()[-1] in auditoriums:
@@ -41,6 +33,20 @@ class Searcher:
                 pass
     
         return pairs
+
+    def by_date(self, date: datetime, auditoriums: list, func) -> list:
+        query_by_date = Template('''
+        select p.text, p.date, p.num, g.name from pairs p
+        inner join groupsofpairs gop on p.id = gop.pair_id
+        inner join "groups" g on g.id = gop.group_id 
+        where p.date = '$date' 
+        order by p.num asc
+        ''')
+        
+        return self.execute_query(
+            query_by_date.substitute(date=str(date)),
+            auditoriums, func
+        )
     
     def create_minimal_pair(self, res) -> Pars_minimal:
         name = " ".join([s for s in res[0].replace("/ ", "").split()[:3]])
@@ -61,11 +67,17 @@ class Searcher:
         )
         return pair
     
-    def by_range_of_dates(self, start_day:datetime, end_day:datetime, auditoriums: list, func) -> list:
+    def by_range_of_dates(self, start_date:datetime, end_date:datetime, auditoriums: list, func) -> list:
         pairs = []
-        dt = start_day
-        while dt <= end_day:
-            ps = self.by_date(date=dt, auditoriums=auditoriums, func=func)
-            pairs.append(ps)
-            dt += timedelta(days=1)
-        return pairs
+        query_by_dates = Template('''
+        select p.text, p.date, p.num, g.name from pairs p
+        inner join groupsofpairs gop on p.id = gop.pair_id
+        inner join "groups" g on g.id = gop.group_id 
+        where p.date >= '$start_date' and p.date <= '$end_date'
+        order by p.num asc
+        ''')
+        
+        return self.execute_query(
+            query_by_dates.substitute(start_date=str(start_date), end_date=str(end_date)),
+            auditoriums, func
+        )
