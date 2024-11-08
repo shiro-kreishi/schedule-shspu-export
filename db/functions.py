@@ -1,6 +1,7 @@
 import psycopg2
 from db.connect import *
 from string import Template
+from data.pars import Pars_minimal
 
 time_pair = {
     1: '08:00-09:30',
@@ -11,7 +12,7 @@ time_pair = {
     6: '16:40-18:10',
 }
 
-def search_pars_by_date(c, date: str, auditoriums: list):
+def search_pars_by_date(c, date: str, auditoriums: list) -> list:
     cur = get_cursor(c)
     query_by_date = Template('''
         select p.text, p.date, p.num, g.name from pairs p
@@ -20,15 +21,17 @@ def search_pars_by_date(c, date: str, auditoriums: list):
         where p.date = '$date' 
         order by p.num asc
     ''')
-
+    pars = []
     results = execute_sql(query_by_date.substitute(date=date), cur, all=True)
     for res in results:
         try:
             if res[0].split()[-1] in auditoriums:
-                par = " ".join([s for s in res[0].replace("/ ", "").split()[:3]])
+                name = " ".join([s for s in res[0].replace("/ ", "").split()[:3]])
                 group = res[-1]
                 aud = res[0].split()[-1]
-                print(f'{par} {group} {aud}')
+                par = Pars_minimal(name=name, group=group, auditorium=aud)
+                pars.append(par)
+                # print(f'{name} {group} {aud}')
                 # print(res[0].replace("/ ", ""), ' | ', res[-1], ' | ', res[0].split()[-1],' | ', res[1], ' | ', time_pair[res[2]])
                 # print(res[0].replace("/ ", "").split()[2:])
                 # print(" ".join([s for s in res[0].replace("/ ", "").split()[2:]]))
@@ -38,3 +41,5 @@ def search_pars_by_date(c, date: str, auditoriums: list):
             print(res)
         finally:
             pass
+    
+    return pars

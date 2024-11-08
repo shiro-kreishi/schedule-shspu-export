@@ -36,7 +36,9 @@ def main():
         db=db, user=user, password=password,
         host=host, port=port
     )
-    search_pars_by_date(conn, date, technopark_auditoriums)
+    pars = search_pars_by_date(conn, date, technopark_auditoriums)
+    for p in pars:
+        print(p)
     close_connection(conn)
 
 if __name__=='__main__':
