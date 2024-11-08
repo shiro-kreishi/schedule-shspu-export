@@ -12,6 +12,10 @@ class Pars_minimal:
 
 class Pars_with_date_and_time(Pars_minimal):
     def __init__(self, name: str, group: str, auditorium: str, date: datetime.date, timestamp: str):
-        super().__init__(name, group, auditorium)
         self.date = date
         self.timestamp = timestamp
+        
+        super().__init__(name, group, auditorium)
+
+    def __str__(self):
+        return f'{super().__str__()} {self.date} {self.timestamp}'

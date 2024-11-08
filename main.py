@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from sys import argv
 from db.functions import search_pars_by_date
+from db.serach import Searcher
 
 time_pair = {
     1: '08:00-09:30',
@@ -36,9 +37,14 @@ def main():
         db=db, user=user, password=password,
         host=host, port=port
     )
-    pars = search_pars_by_date(conn, date, technopark_auditoriums)
+    searcher = Searcher(connection=conn)
+    # pars = searcher.by_date(date, technopark_auditoriums, searcher.create_minimal_pair)
+    # for p in pars:
+    #     print(p)
+    pars = searcher.by_date(date, technopark_auditoriums, searcher.create_pair_with_date_and_time)
     for p in pars:
         print(p)
+    
     close_connection(conn)
 
 if __name__=='__main__':
