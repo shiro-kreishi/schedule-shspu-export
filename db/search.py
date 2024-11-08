@@ -1,7 +1,7 @@
 from db.connect import *
 from string import Template
 from data.pars import Pars_minimal, Pars_with_date_and_time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Searcher:
@@ -26,9 +26,9 @@ class Searcher:
         order by p.num asc
     ''')
 
-    def by_date(self, date: str, auditoriums: list, func) -> list:
+    def by_date(self, date: datetime, auditoriums: list, func) -> list:
         pairs = []
-        results = execute_sql(self.query_by_date.substitute(date=date), self.cursor, all=True)
+        results = execute_sql(self.query_by_date.substitute(date=str(date)), self.cursor, all=True)
         for res in results:
             try:
                 if res[0].split()[-1] in auditoriums:
@@ -60,3 +60,12 @@ class Searcher:
             date=p_date, timestamp=p_time
         )
         return pair
+    
+    def by_range_of_dates(self, start_day:datetime, end_day:datetime, auditoriums: list, func) -> list:
+        pairs = []
+        dt = start_day
+        while dt <= end_day:
+            ps = self.by_date(date=dt, auditoriums=auditoriums, func=func)
+            pairs.append(ps)
+            dt += timedelta(days=1)
+        return pairs

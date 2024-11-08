@@ -4,7 +4,9 @@ import os
 from dotenv import load_dotenv
 from sys import argv
 from db.functions import search_pars_by_date
-from db.serach import Searcher
+from db.search import Searcher
+from datetime import datetime
+from functools import reduce 
 
 time_pair = {
     1: '08:00-09:30',
@@ -20,10 +22,11 @@ technopark_auditoriums = [
 ]
 
 def main():
-    if len(argv) <= 1:
+    if len(argv) <= 2:
         print('Enter some argv')
         return
-    date = argv[1]
+    start_date = datetime.strptime(argv[1], '%Y-%m-%d').date()
+    end_date = datetime.strptime(argv[2], '%Y-%m-%d').date()
     dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
     if os.path.exists(dotenv_path):
         load_dotenv(dotenv_path)
@@ -41,9 +44,12 @@ def main():
     # pars = searcher.by_date(date, technopark_auditoriums, searcher.create_minimal_pair)
     # for p in pars:
     #     print(p)
-    pars = searcher.by_date(date, technopark_auditoriums, searcher.create_pair_with_date_and_time)
-    for p in pars:
-        print(p)
+    # pars = searcher.by_date(start_date, technopark_auditoriums, searcher.create_pair_with_date_and_time)
+    # for p in pars:
+    #     print(p)
+    
+    pairs = searcher.by_range_of_dates(start_date, end_date, technopark_auditoriums, searcher.create_minimal_pair)
+    print(reduce(lambda count, l: count + len(l), pairs, 0))
     
     close_connection(conn)
 
