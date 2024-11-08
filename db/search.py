@@ -40,7 +40,7 @@ class Searcher:
         inner join groupsofpairs gop on p.id = gop.pair_id
         inner join "groups" g on g.id = gop.group_id 
         where p.date = '$date' 
-        order by p.num asc
+        order by p.date asc
         ''')
         
         return self.execute_query(
@@ -74,7 +74,7 @@ class Searcher:
         inner join groupsofpairs gop on p.id = gop.pair_id
         inner join "groups" g on g.id = gop.group_id 
         where p.date >= '$start_date' and p.date <= '$end_date'
-        order by p.num asc
+        order by p.date asc
         ''')
         
         return self.execute_query(

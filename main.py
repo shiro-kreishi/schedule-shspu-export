@@ -6,7 +6,8 @@ from sys import argv
 from db.functions import search_pars_by_date
 from db.search import Searcher
 from datetime import datetime
-from functools import reduce 
+from functools import reduce
+from data.export_pairs import export_to_json
 
 time_pair = {
     1: '08:00-09:30',
@@ -52,6 +53,8 @@ def main():
     print(len(pairs))
     for p in pairs:
         print(p)
+
+    export_to_json(pairs, f'output-{start_date}-{end_date}.json')
     
     close_connection(conn)
 
