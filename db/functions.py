@@ -12,8 +12,8 @@ time_pair = {
     6: '16:40-18:10',
 }
 
-def search_pars_by_date(c, date: str, auditoriums: list) -> list:
-    cur = get_cursor(c)
+def search_pars_by_date(connection, date: str, auditoriums: list) -> list:
+    cur = get_cursor(connection)
     query_by_date = Template('''
         select p.text, p.date, p.num, g.name from pairs p
         inner join groupsofpairs gop on p.id = gop.pair_id

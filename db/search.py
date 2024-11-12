@@ -56,7 +56,7 @@ class Searcher:
         return pair
     
     def create_pair_with_date_and_time(self, res) -> Pars_with_date_and_time:
-        name = " ".join([s for s in res[0].replace("/ ", "").split()[:3]])
+        name = " ".join([s for s in res[0].replace("/ ", "").split()[:4]])
         group = res[-1]
         aud = res[0].split()[-1]
         p_date = res[1]
